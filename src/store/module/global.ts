@@ -1,50 +1,34 @@
-import { useI18n } from 'vue-i18n'
-import chroma from 'chroma-js'
-import { setHtmlProperty } from '@/utils'
 import { useMobile } from '@/hooks'
-import { LANGUAGES, THEME_COLORS } from '@/constants'
+import { useI18n } from 'vue-i18n'
+
+const LANGUAGES = {
+  EN: 'en-US',
+  CN: 'zh-CN',
+}
 
 export const useGlobalStore = defineStore('global', () => {
   const i18n = useI18n()
-  const language = ref(LANGUAGES.CN)
-  const keyword = ref('')
-  const focusCount = ref(0)
+  const currentLanguage = ref(LANGUAGES.CN)
   const isDark = useDark()
-  const fields = ref(['result'])
-  const autoRender = ref(true)
+  const isMobile = useMobile()
 
   function toggleLanguage() {
-    language.value = i18n.locale.value = language.value === LANGUAGES.CN ? LANGUAGES.EN : LANGUAGES.CN
+    const newLanguage = currentLanguage.value === LANGUAGES.CN ? LANGUAGES.EN : LANGUAGES.CN
+    currentLanguage.value = i18n.locale.value = newLanguage
   }
 
-  const toggleExecuteMode = useToggle(autoRender)
-  const isMobile = useMobile()
   const [isExpandEditor, toggleEditor] = useToggle(true)
-  const paneSize = computed(() => {
-    if (isMobile.value)
-      return isExpandEditor.value ? [50, 50] : [0, 100]
 
-    else
-      return isExpandEditor.value ? [30, 70] : [0, 100]
-  })
-  const colorName = ref('orange')
-  const themeColor = computed(() => {
-    const color = THEME_COLORS[colorName.value]
-    setHtmlProperty('--el-color-primary', color)
-    setHtmlProperty('--el-color-primary-light-9', chroma(color).alpha(0.1).hex())
-    setHtmlProperty('--el-color-primary-light-7', chroma(color).alpha(0.3).hex())
-    return color
+  // 根据设备类型和编辑器展开状态动态计算面板尺寸
+  const paneSize = computed(() => {
+    if (!isExpandEditor.value)
+      return [0, 100]
+
+    return isMobile.value ? [50, 50] : [30, 70]
   })
   return {
     isDark,
-    fields,
-    keyword,
-    language,
-    focusCount,
-    colorName,
-    themeColor,
-    autoRender,
-    toggleExecuteMode,
+    currentLanguage,
     isExpandEditor,
     toggleEditor,
     paneSize,

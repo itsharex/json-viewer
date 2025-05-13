@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { useGlobalStore } from '@/store'
+import { useGraphStore } from '@/store'
 
-const { keyword, focusCount } = toRefs(useGlobalStore())
+const { keyword, focusCount } = toRefs(useGraphStore())
 </script>
 
 <template>
@@ -12,12 +12,10 @@ const { keyword, focusCount } = toRefs(useGlobalStore())
         v-model.trim="keyword" class="flex-1 bg-transparent outline-none" text="gray-500 dark:gray-300" type="text"
         :placeholder="$t('inputPlaceholder')"
       >
-      <Transition>
-        <span
-          v-show="keyword" class="iconfont icon-clear cursor-pointer text-gray/60 hover:text-gray"
-          @click="keyword = ''"
-        />
-      </Transition>
+      <span
+        v-show="keyword" class="iconfont icon-clear cursor-pointer text-gray/60 hover:text-gray"
+        @click="keyword = ''"
+      />
     </div>
     <span class="text-nowrap text-primary">{{ focusCount }}</span>
   </div>

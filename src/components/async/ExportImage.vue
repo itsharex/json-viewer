@@ -1,18 +1,13 @@
 <script lang="ts" setup>
 import { useDialogWidth } from '@/hooks'
+import { useGraphStore } from '@/store'
 
-const emit = defineEmits<{
-  // confirm: [val: ImageConfig]
-  (event: 'confirm', val: ImageConfig): void
-}>()
-const isDark = useDark()
+const { exportImage } = useGraphStore()
 interface ImageConfig {
   name: string
   type: string
-  padding: number
-  backgroundColor: string
 }
-const width = useDialogWidth()
+const width = useDialogWidth(400)
 const visible = defineModel<boolean>()
 const imageTypes = reactive({
   PNG: 'image/png',
@@ -23,15 +18,11 @@ const imageTypes = reactive({
 const exportConfig = ref<ImageConfig> ({
   name: 'json-viewer',
   type: 'image/png',
-  padding: 20,
-  backgroundColor: '#fff',
 })
 
 function confirm() {
-  emit('confirm', {
-    ...exportConfig.value,
-    backgroundColor: isDark.value ? '#000' : '#fff',
-  })
+  const { name, type } = exportConfig.value
+  exportImage(name, type)
   visible.value = false
 }
 </script>
